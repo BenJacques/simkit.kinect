@@ -5,7 +5,7 @@
 #include <fstream>
 #include <vector>
 #include <sys/stat.h>
-
+#include <thread>
 #include <string>
 #include <string.h>
 #include <errno.h>
@@ -14,11 +14,14 @@
 #include "date.h"
 #include "utils.h"
 #include "kinect.h"
+#include "buttons.h"
 
 static const char* root_dir = "/media/FarmData01/Datasets/";
+kinect::Kinect kinect_device;
+buttons::Buttons button_mapping;
+DATA_DIRS_T data_dirs;
 
-
-bool create_data_capture_directories(const char *fileDirectory, DATA_DIRS_T &data_dirs){
+bool create_data_capture_directories(const char *fileDirectory){
 
     // create the directories for storing the captures
     std::string base_dir = fileDirectory;
@@ -58,24 +61,28 @@ bool create_data_capture_directories(const char *fileDirectory, DATA_DIRS_T &dat
     return true;
 }
 
+void start_streaming_connect(int captureFrameCount){
+    kinect_device.Run(captureFrameCount, data_dirs);
+}
 
+void stop_streaming_connect(){
+    kinect_device.Stop();
+}
 
 int main(int argc, char* argv[]) {
 
-
+    // Create the directory structure for saving data
     std::string s = date::format("%m_%d_%Y", std::chrono::system_clock::now());
     printf("Time: %s", s.c_str());
     std::string base_dir = root_dir;
     base_dir += s;
-    DATA_DIRS_T data_dirs;
-    if (create_data_capture_directories(base_dir.c_str(), data_dirs) == false){
+    if (create_data_capture_directories(base_dir.c_str()) == false){
         return -1;
     }
 
 
     int returnCode = 1;
     int captureFrameCount;
-
     if (argc < 2)
     {
         printf("%s FRAMECOUNT\n", argv[0]);
@@ -86,17 +93,26 @@ int main(int argc, char* argv[]) {
 
     captureFrameCount = atoi(argv[1]);
     printf("Capturing %d frames\n", captureFrameCount);
-    kinect::Kinect kinect_device = kinect::Kinect();
+    kinect_device = kinect::Kinect();
 
+    // Connect to the Kinect 
     if (kinect_device.Connect(-1) == false){
         printf("Failed to connect to Kinect.");
         return 2;
     }
+
+    // Try saving the calibration file if possible
     kinect_device.TrySaveCalibrationFile(base_dir.c_str());
 
-    kinect_device.Run(captureFrameCount, data_dirs);
+    // Set up GPIO pins on the Nano
+    button_mapping = buttons::Buttons();
+    button_mapping.SetupPins();
 
 
+    std::thread kinect_stream_thread (start_streaming_connect, captureFrameCount);
+    std::thread button_thread (&buttons::Buttons::PollInputs, button_mapping);
+    kinect_stream_thread.join();
+    button_thread.join();
     returnCode = 0;
 
     //kinect_device.Stop();

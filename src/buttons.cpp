@@ -1,4 +1,19 @@
 #include <JetsonGPIO.h>
+#include <unistd.h>
+#include "buttons.h"
+
+using namespace buttons;
+
+Buttons::Buttons():
+    m_polling(false)
+{
+   
+}
+
+Buttons::~Buttons()
+{
+    // Close();
+}
 
 const int UP_CHANNEL = 16;
 const int DOWN_CHANNEL = 18;
@@ -6,7 +21,10 @@ const int LEFT_CHANNEL = 19;
 const int RIGHT_CHANNEL = 21;
 const int ENTER_CHANNEL = 22;
 
-void setup_pins(){
+void Buttons::SetupPins(){
+    // Board mode must be set first
+    GPIO::setmode(GPIO::BOARD);
+
     // UP key
     GPIO::setup(UP_CHANNEL,GPIO::IN);
 
@@ -23,9 +41,10 @@ void setup_pins(){
     GPIO::setup(ENTER_CHANNEL,GPIO::IN);
 }
 
-void poll_inputs(){
-
-    while (true){
+void Buttons::PollInputs(){
+    m_polling = true;
+    while (m_polling){
+        printf("polling buttons...\n");
         if (GPIO::input(UP_CHANNEL) == GPIO::HIGH){
             // Send qt event
         }
@@ -45,9 +64,12 @@ void poll_inputs(){
         if (GPIO::input(ENTER_CHANNEL) == GPIO::HIGH){
             // Send qt event
         }
+        usleep(200000); // sleep for 200 ms to avoid lots of key press events
     }
 }
 
-void close(){
+void Buttons::Close(){
+    m_polling=false;
     GPIO::cleanup();
 }
+

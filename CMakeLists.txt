@@ -8,7 +8,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 include_directories(include)
 
 set(SOURCES
-    src/main.cpp)
+    src/main.cpp
+    src/kinect.cpp
+    src/utils.cpp
+    src/buttons.cpp)
 
 
 
@@ -33,5 +36,7 @@ set(CMAKE_CXX_FLAGS "${CXX_FLAGS_LIST}")
 add_executable(simkit_kinect ${SOURCES})
 target_link_libraries(simkit_kinect PRIVATE k4a)
 target_link_libraries(simkit_kinect PRIVATE k4arecord)
-target_link_libraries(simkit_kinect PRIVATE qt5)
+#target_link_libraries(simkit_kinect PRIVATE qt5)
+target_link_libraries(simkit_kinect PRIVATE JetsonGPIO)
+target_link_libraries(simkit_kinect PRIVATE pthread)
 #
