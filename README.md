@@ -38,3 +38,7 @@ build/starter
 ```
 - Follow instructions here: https://github.com/microsoft/Azure-Kinect-Sensor-SDK/blob/develop/docs/usage.md#debian-package
 `sudo apt-get install libk4a1.4-dev`
+
+# For buttons
+sudo apt-get install libx11-dev
+sudo apt-get install libxtst-dev
