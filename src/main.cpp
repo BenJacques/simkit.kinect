@@ -12,6 +12,7 @@
 
 #include "common_macros.h"
 #include "date.h"
+#include "utils.h"
 
 static const char* root_dir = "/media/FarmData01/Datasets/";
 std::string m_depthFileDirectory = "";
@@ -19,48 +20,12 @@ std::string m_colorFileDirectory = "";
 std::string m_irFileDirectory = "";
 
 
-int mkdir_p(const char *path)
-{
-    // Adapted from http://stackoverflow.com/a/2336245/119527 
-    const size_t len = strlen(path);
-    char _path[PATH_MAX];
-    char *p; 
 
-    errno = 0;
 
-    // Copy string so its mutable 
-    if (len > sizeof(_path)-1) {
-        errno = ENAMETOOLONG;
-        return -1; 
-    }   
-    strcpy(_path, path);
-
-    // Iterate the string 
-    for (p = _path + 1; *p; p++) {
-        if (*p == '/') {
-            // Temporarily truncate 
-            *p = '\0';
-
-            if (mkdir(_path, S_IRWXU) != 0) {
-                if (errno != EEXIST)
-                    return -1; 
-            }
-
-            *p = '/';
-        }
-    }   
-
-    if (mkdir(_path, S_IRWXU) != 0) {
-        if (errno != EEXIST)
-            return -1; 
-    }   
-
-    return 0;
-}
 
 bool create_data_capture_directories(const char *fileDirectory){
 
- 
+     char _path[PATH_MAX];
    // create the directories for storing the captures
    std::string base_dir = fileDirectory;
    base_dir += "/camera_1";
@@ -73,15 +38,15 @@ bool create_data_capture_directories(const char *fileDirectory){
  
    int nError = 0;
    printf("Creating depth directory: %s", m_depthFileDirectory.c_str());
-   nError = mkdir_p(m_depthFileDirectory.c_str());
-   if (nError != 0)
+   nError = mkdir_recursive(m_depthFileDirectory.c_str());
+   if (nError != 0)   
    {
        printf("Depth directory (%s) creation failed. Exiting...", m_depthFileDirectory.c_str());
        return false;
    }
  
     printf("Creating color directory: %s", m_colorFileDirectory.c_str());
-   nError = mkdir_p(m_colorFileDirectory.c_str());
+   nError = mkdir_recursive(m_colorFileDirectory.c_str());
    if (nError != 0)
    {
        printf("Color directory creation failed. Exiting...");
@@ -89,7 +54,7 @@ bool create_data_capture_directories(const char *fileDirectory){
    }
  
     printf("Creating infrared directory: %s", m_irFileDirectory.c_str());
-   nError = mkdir_p(m_irFileDirectory.c_str());
+   nError = mkdir_recursive(m_irFileDirectory.c_str());
    if (nError != 0)
    {
        printf("Infrared directory creation failed. Exiting...");
@@ -165,7 +130,9 @@ void save_depth_or_ir_image(k4a_image_t image, std::string dir, std::string fram
     file_object.close();  
 }
 
+
 int main(int argc, char* argv[]) {
+
 
     std::string s = date::format("%m_%d_%Y", std::chrono::system_clock::now());
     printf("Time: %s", s.c_str());
