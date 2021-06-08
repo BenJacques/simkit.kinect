@@ -4,10 +4,9 @@
 
 using namespace buttons;
 
-Buttons::Buttons():
-    m_polling(false)
+Buttons::Buttons()
 {
-   
+
 }
 
 Buttons::~Buttons()
@@ -43,6 +42,8 @@ void Buttons::SetupPins(){
 
 void Buttons::PollInputs(){
     m_polling = true;
+    m_polling_complete = false;
+
     while (m_polling){
         printf("polling buttons...\n");
         if (GPIO::input(UP_CHANNEL) == GPIO::HIGH){
@@ -66,10 +67,29 @@ void Buttons::PollInputs(){
         }
         usleep(200000); // sleep for 200 ms to avoid lots of key press events
     }
+    m_polling_complete = true;
+}
+
+std::thread Buttons::PollInputsThread(){
+    return std::thread(&Buttons::PollInputs, this);
 }
 
 void Buttons::Close(){
+    printf("***SETTING BUTTON POLLING TO FALSE");
     m_polling=false;
-    GPIO::cleanup();
+    while(m_polling_complete){
+        usleep(100000);
+    }
+    try
+    {
+        //TODO: This is causing segmentation faults. Need to figure out why.
+        //GPIO::cleanup();
+    }
+    catch(const std::exception& e)
+    {
+        printf("Error in Buttons::Close %s\n",e.what());
+    }
+    
+    
 }
 

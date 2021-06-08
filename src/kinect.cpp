@@ -6,21 +6,19 @@
 
 using namespace kinect;
 
-Kinect::Kinect():
-    m_device(NULL),
-    m_capture(NULL),
-    m_deviceConfig(K4A_DEVICE_CONFIG_INIT_DISABLE_ALL)
+Kinect::Kinect()
 {
+   
 }
 
 Kinect::~Kinect()
 {
-
+   
 }
 
-bool Kinect::Connect(int32_t exposureValue){
+bool Kinect::Connect(int32_t exposureValue, DATA_DIRS_T &data_dirs){
     uint32_t device_count = k4a_device_get_installed_count();
-
+    m_data_dirs = data_dirs;
     if (device_count == 0)
     {
         printf("No K4A devices found\n");
@@ -143,7 +141,7 @@ void Kinect::save_depth_or_ir_image(k4a_image_t image, std::string dir, std::str
     file_object.close();  
 }
 
-int Kinect::Run(int capture_frame_count, DATA_DIRS_T &data_dirs){
+int Kinect::Run(int capture_frame_count){
     long last_timestamp = 0;
     int frames_captured = 0;
     std::string frame_s = "";
@@ -172,9 +170,11 @@ int Kinect::Run(int capture_frame_count, DATA_DIRS_T &data_dirs){
             return K4A_WAIT_RESULT_FAILED;
         }
 
+        
+        double curr_temp = (double)k4a_capture_get_temperature_c(m_capture);
         frame_s = std::to_string(frames_captured);
-        printf("Capture %s", frame_s.c_str());
-
+        printf("Capture %s %fC", frame_s.c_str(), curr_temp);
+        m_lastTemp = curr_temp;
         // Probe for a color image
         k4a_image_t color_image = k4a_capture_get_color_image(m_capture);
         // probe for a IR16 image
@@ -190,9 +190,9 @@ int Kinect::Run(int capture_frame_count, DATA_DIRS_T &data_dirs){
                     time_diff);
 
             // Save all the images
-            save_color_image(color_image,data_dirs.colorFileDirectory, frame_s);
-            save_depth_or_ir_image(ir_image, data_dirs.irFileDirectory, frame_s);
-            save_depth_or_ir_image(depth_image, data_dirs.depthFileDirectory, frame_s);
+            save_color_image(color_image,m_data_dirs.colorFileDirectory, frame_s);
+            save_depth_or_ir_image(ir_image, m_data_dirs.irFileDirectory, frame_s);
+            save_depth_or_ir_image(depth_image, m_data_dirs.depthFileDirectory, frame_s);
         }
 
         if (color_image != NULL) k4a_image_release(color_image);
@@ -200,12 +200,25 @@ int Kinect::Run(int capture_frame_count, DATA_DIRS_T &data_dirs){
         if (depth_image != NULL) k4a_image_release(depth_image);
 
         // release capture
-        k4a_capture_release(m_capture);
-        fflush(stdout);
-        
+        k4a_capture_release(m_capture);     
     }
     m_streaming = false;
     return 0;
+}
+
+bool Kinect::GetRecentTemparature(double &last_temp){
+    if (m_device == NULL){
+        return false;
+    }
+    if (m_streaming == false){
+        return false;
+    }
+    last_temp = m_lastTemp;
+    
+    return true;
+}
+std::thread Kinect::RunThread(int capture_frame_count){
+    return std::thread(&Kinect::Run, this, capture_frame_count);
 }
 void Kinect::Stop(){
     m_streaming = false;

@@ -9,6 +9,7 @@
 #include <string>
 #include <string.h>
 #include <errno.h>
+#include <unistd.h>
 
 #include "common_macros.h"
 #include "date.h"
@@ -17,9 +18,10 @@
 #include "buttons.h"
 
 static const char* root_dir = "/media/FarmData01/Datasets/";
-kinect::Kinect kinect_device;
-buttons::Buttons button_mapping;
+static kinect::Kinect kinect_device;
+static buttons::Buttons button_mapping;
 DATA_DIRS_T data_dirs;
+std::atomic <bool> temparature_logging_enabled (false);
 
 bool create_data_capture_directories(const char *fileDirectory){
 
@@ -61,12 +63,33 @@ bool create_data_capture_directories(const char *fileDirectory){
     return true;
 }
 
-void start_streaming_connect(int captureFrameCount){
-    kinect_device.Run(captureFrameCount, data_dirs);
-}
+void log_temparatures(const char *fileDirectory){
+    temparature_logging_enabled = true;
+    std::string temparature_file_name = fileDirectory;
+    temparature_file_name += "/temparature_readings.csv";
+    std::ofstream file_object(temparature_file_name);
+    std::string header = "Timestamp,CPU Temp (C),GPU Temp (C),Kinect Temp (C)\n";
+    file_object.write(header.c_str(), header.length());
 
-void stop_streaming_connect(){
-    kinect_device.Stop();
+    while (temparature_logging_enabled){
+        double cpu_temp;
+        double gpu_temp;
+        double kinect_temp;
+        bool nanoTempsRead = read_temparatures(cpu_temp, gpu_temp);
+        bool kinectTempRead = kinect_device.GetRecentTemparature(kinect_temp);
+        if (nanoTempsRead && kinectTempRead){
+            std::string s = date::format("%T", std::chrono::system_clock::now());
+            char *output;
+            int len = asprintf(&output, "%s,%f,%f,%f\n",s.c_str(),cpu_temp,gpu_temp,kinect_temp);
+            file_object.write(output,len);
+            free(output);
+            file_object.flush();
+        }
+
+        usleep(1*1000*1000); // Log every 60 seconds
+    }
+    file_object.flush();
+    file_object.close();
 }
 
 int main(int argc, char* argv[]) {
@@ -93,10 +116,9 @@ int main(int argc, char* argv[]) {
 
     captureFrameCount = atoi(argv[1]);
     printf("Capturing %d frames\n", captureFrameCount);
-    kinect_device = kinect::Kinect();
 
     // Connect to the Kinect 
-    if (kinect_device.Connect(-1) == false){
+    if (kinect_device.Connect(-1, data_dirs) == false){
         printf("Failed to connect to Kinect.");
         return 2;
     }
@@ -105,17 +127,25 @@ int main(int argc, char* argv[]) {
     kinect_device.TrySaveCalibrationFile(base_dir.c_str());
 
     // Set up GPIO pins on the Nano
-    button_mapping = buttons::Buttons();
     button_mapping.SetupPins();
 
 
-    std::thread kinect_stream_thread (start_streaming_connect, captureFrameCount);
-    std::thread button_thread (&buttons::Buttons::PollInputs, button_mapping);
+    std::thread kinect_stream_thread = kinect_device.RunThread(captureFrameCount);
+    std::thread button_thread = button_mapping.PollInputsThread(); 
+    std::thread log_temps_thread (log_temparatures, base_dir.c_str());
+    printf("**THREADS STARTED****\n");
     kinect_stream_thread.join();
+    printf("**KINECT THREAD DONE****\n");; 
+    temparature_logging_enabled = false;
+    button_mapping.Close();
     button_thread.join();
+    printf("**BUTTON THREAD DONE****\n");
+    log_temps_thread.join();
+    printf("**LOG TEMPS THREAD DONE****\n");
     returnCode = 0;
 
-    //kinect_device.Stop();
+    kinect_device.Stop();
+
 
     return returnCode;
 }
