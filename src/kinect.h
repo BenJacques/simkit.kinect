@@ -15,7 +15,7 @@ public:
     Kinect();
     ~Kinect();
 
-    bool Connect(int32_t exposureValue, DATA_DIRS_T &data_dirs);
+    bool Connect(int32_t exposureValue, settings::Settings &curr_settings);
     bool TrySaveCalibrationFile(const char* base_dir);
     int Run(int capture_frame_count);
     std::thread RunThread(int capture_frame_count);
@@ -30,7 +30,7 @@ private:
     k4a_device_t m_device;
     k4a_capture_t m_capture;
     k4a_device_configuration_t m_deviceConfig;
-    DATA_DIRS_T m_data_dirs;
+    settings::DATA_DIRS_T m_data_dirs;
 
     void save_color_image(k4a_image_t image, std::string dir, std::string frame_s);
     void save_depth_or_ir_image(k4a_image_t image, std::string dir, std::string frame_s);

@@ -42,3 +42,6 @@ build/starter
 # For buttons
 sudo apt-get install libx11-dev
 sudo apt-get install libxtst-dev
+
+# For json configuration
+https://github.com/open-source-parsers/jsoncpp

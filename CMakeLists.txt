@@ -11,8 +11,11 @@ set(SOURCES
     src/main.cpp
     src/kinect.cpp
     src/utils.cpp
-    src/buttons.cpp)
+    src/buttons.cpp
+    src/settings.cpp)
 
+find_package(jsoncpp CONFIG REQUIRED)
+    
 
 
 string(JOIN " " CXX_FLAGS_LIST
@@ -30,7 +33,7 @@ string(JOIN " " CXX_FLAGS_LIST
     -Wformat=2
     -pedantic
     -Werror
-)
+    )
 set(CMAKE_CXX_FLAGS "${CXX_FLAGS_LIST}")
 
 add_executable(simkit_kinect ${SOURCES})
@@ -39,4 +42,4 @@ target_link_libraries(simkit_kinect PRIVATE k4arecord)
 #target_link_libraries(simkit_kinect PRIVATE qt5)
 target_link_libraries(simkit_kinect PRIVATE JetsonGPIO)
 target_link_libraries(simkit_kinect PRIVATE pthread)
-#
+target_link_libraries(simkit_kinect PRIVATE jsoncpp_object jsoncpp_static)

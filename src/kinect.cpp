@@ -16,9 +16,9 @@ Kinect::~Kinect()
    
 }
 
-bool Kinect::Connect(int32_t exposureValue, DATA_DIRS_T &data_dirs){
+bool Kinect::Connect(int32_t exposureValue, settings::Settings &curr_settings){
     uint32_t device_count = k4a_device_get_installed_count();
-    m_data_dirs = data_dirs;
+    m_data_dirs = curr_settings.data_dirs;
     if (device_count == 0)
     {
         printf("No K4A devices found\n");
@@ -35,10 +35,10 @@ bool Kinect::Connect(int32_t exposureValue, DATA_DIRS_T &data_dirs){
     // TODO: Change this to a config file later.
 
     m_deviceConfig.color_format = K4A_IMAGE_FORMAT_COLOR_MJPG;
-    m_deviceConfig.color_resolution = K4A_COLOR_RESOLUTION_2160P;
+    m_deviceConfig.color_resolution = static_cast<k4a_color_resolution_t>(curr_settings.color_resolution); // K4A_COLOR_RESOLUTION_2160P;
     //config.color_resolution = K4A_COLOR_RESOLUTION_3072P;
-    m_deviceConfig.depth_mode = K4A_DEPTH_MODE_WFOV_2X2BINNED;
-    m_deviceConfig.camera_fps = K4A_FRAMES_PER_SECOND_30;
+    m_deviceConfig.depth_mode = static_cast<k4a_depth_mode_t>(curr_settings.depth_mode); // K4A_DEPTH_MODE_WFOV_2X2BINNED;
+    m_deviceConfig.camera_fps = static_cast<k4a_fps_t>(curr_settings.frames_per_second); // K4A_FRAMES_PER_SECOND_30;
 
 
     if (K4A_RESULT_SUCCEEDED != k4a_device_start_cameras(m_device, &m_deviceConfig))

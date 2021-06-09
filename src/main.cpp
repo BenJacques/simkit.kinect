@@ -11,57 +11,22 @@
 #include <errno.h>
 #include <unistd.h>
 
+
 #include "common_macros.h"
 #include "date.h"
 #include "utils.h"
 #include "kinect.h"
 #include "buttons.h"
+#include "settings.h"
 
 static const char* root_dir = "/media/FarmData01/Datasets/";
 static kinect::Kinect kinect_device;
 static buttons::Buttons button_mapping;
-DATA_DIRS_T data_dirs;
+static settings::Settings curr_settings;
+
 std::atomic <bool> temparature_logging_enabled (false);
 
-bool create_data_capture_directories(const char *fileDirectory){
 
-    // create the directories for storing the captures
-    std::string base_dir = fileDirectory;
-    base_dir += "/camera_1";
-    data_dirs.depthFileDirectory = base_dir;
-    data_dirs.depthFileDirectory += "/Depth/";
-    data_dirs.colorFileDirectory = base_dir;
-    data_dirs.colorFileDirectory  += "/Color/";
-    data_dirs.irFileDirectory = base_dir;
-    data_dirs.irFileDirectory += "/Infrared/";
-    
-    int nError = 0;
-    printf("Creating depth directory: %s", data_dirs.depthFileDirectory.c_str());
-    nError = mkdir_recursive(data_dirs.depthFileDirectory.c_str());
-    if (nError != 0)   
-    {
-        printf("Depth directory (%s) creation failed. Exiting...", data_dirs.depthFileDirectory.c_str());
-        return false;
-    }
-    
-        printf("Creating color directory: %s", data_dirs.colorFileDirectory.c_str());
-    nError = mkdir_recursive(data_dirs.colorFileDirectory.c_str());
-    if (nError != 0)
-    {
-        printf("Color directory creation failed. Exiting...");
-        return false;
-    }
-    
-        printf("Creating infrared directory: %s", data_dirs.irFileDirectory.c_str());
-    nError = mkdir_recursive(data_dirs.irFileDirectory.c_str());
-    if (nError != 0)
-    {
-        printf("Infrared directory creation failed. Exiting...");
-        return false;
-    }
-    
-    return true;
-}
 
 void log_temparatures(const char *fileDirectory){
     temparature_logging_enabled = true;
@@ -92,6 +57,7 @@ void log_temparatures(const char *fileDirectory){
     file_object.close();
 }
 
+
 int main(int argc, char* argv[]) {
 
     // Create the directory structure for saving data
@@ -99,10 +65,13 @@ int main(int argc, char* argv[]) {
     printf("Time: %s", s.c_str());
     std::string base_dir = root_dir;
     base_dir += s;
-    if (create_data_capture_directories(base_dir.c_str()) == false){
+    if (curr_settings.create_data_capture_directories(base_dir.c_str()) == false){
         return -1;
     }
 
+    if (curr_settings.load_settings("config.json") == false){
+        return -1;
+    }
 
     int returnCode = 1;
     int captureFrameCount;
@@ -118,7 +87,7 @@ int main(int argc, char* argv[]) {
     printf("Capturing %d frames\n", captureFrameCount);
 
     // Connect to the Kinect 
-    if (kinect_device.Connect(-1, data_dirs) == false){
+    if (kinect_device.Connect(-1, curr_settings) == false){
         printf("Failed to connect to Kinect.");
         return 2;
     }
