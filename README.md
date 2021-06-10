@@ -45,3 +45,8 @@ sudo apt-get install libxtst-dev
 
 # For json configuration
 https://github.com/open-source-parsers/jsoncpp
+
+ libx11-dev
+      libmesa-dev
+      libxi-dev
+      libxext-dev

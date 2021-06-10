@@ -3,7 +3,9 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "/home/simkitv2-0/Documents/repos/vcpkg/packages/jsoncpp_arm64-linux/include",
+                "/media/FarmData01/qt/qt5-build/qtbase/include/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

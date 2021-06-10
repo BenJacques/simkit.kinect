@@ -15,7 +15,9 @@ set(SOURCES
     src/settings.cpp)
 
 find_package(jsoncpp CONFIG REQUIRED)
-    
+find_package(Qt5Core CONFIG REQUIRED)
+find_package(Qt5Gui CONFIG REQUIRED)
+find_package(Qt5Widgets CONFIG REQUIRED)   
 
 
 string(JOIN " " CXX_FLAGS_LIST
@@ -43,3 +45,4 @@ target_link_libraries(simkit_kinect PRIVATE k4arecord)
 target_link_libraries(simkit_kinect PRIVATE JetsonGPIO)
 target_link_libraries(simkit_kinect PRIVATE pthread)
 target_link_libraries(simkit_kinect PRIVATE jsoncpp_object jsoncpp_static)
+target_link_libraries(simkit_kinect PRIVATE Qt5::Core Qt5::Gui Qt5::Widgets)
