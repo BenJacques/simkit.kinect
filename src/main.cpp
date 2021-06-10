@@ -65,10 +65,10 @@ int main(int argc, char* argv[]) {
     printf("Time: %s", s.c_str());
 
     if (dirExists(root_dir) ==false){
-        printf("Error! No External Hard Drive detected.\nWould you like to store data locally?.")
-        std::string usr_input;
+        printf("Error! No External Hard Drive detected.\nWould you like to store data locally?.");
+        char* usr_input;
         std::cin >> usr_input;
-        if (usr_input == 'y' || usr_input == "Y"){
+        if (usr_input == "y" || usr_input == "Y"){
             root_dir = "~/Documents/Datasets/";
         }
         else{
