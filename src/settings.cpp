@@ -8,7 +8,7 @@ using namespace settings;
 
 
 
-void Settings::create_and_save_default_settings_file(std::string file_path){
+void Settings::createAndSaveDefaultSettingsFile(std::string file_path){
     Json::Value root;
 
     root["exposure"] = 0;
@@ -24,7 +24,7 @@ void Settings::create_and_save_default_settings_file(std::string file_path){
     file_object.close();
 }
 
-bool Settings::load_settings(std::string file_path){
+bool Settings::LoadSettings(std::string file_path){
     Json::Value root;
     std::ifstream ifs;
     ifs.open(file_path);
@@ -32,7 +32,7 @@ bool Settings::load_settings(std::string file_path){
         ifs.close();
         // If the config file doesn't exist, then create and save it first
         printf("No settings file found. Creating default one.\n");
-        create_and_save_default_settings_file(file_path);
+        createAndSaveDefaultSettingsFile(file_path);
     }
     ifs.open(file_path);
     Json::CharReaderBuilder builder;
@@ -50,7 +50,7 @@ bool Settings::load_settings(std::string file_path){
 }
 
 
-bool Settings::create_data_capture_directories(const char *fileDirectory){
+bool Settings::CreateDataCaptureDirectories(const char *fileDirectory){
 
     // create the directories for storing the captures
     std::string base_dir = fileDirectory;

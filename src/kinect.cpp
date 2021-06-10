@@ -36,7 +36,6 @@ bool Kinect::Connect(int32_t exposureValue, settings::Settings &curr_settings){
 
     m_deviceConfig.color_format = K4A_IMAGE_FORMAT_COLOR_MJPG;
     m_deviceConfig.color_resolution = static_cast<k4a_color_resolution_t>(curr_settings.color_resolution); // K4A_COLOR_RESOLUTION_2160P;
-    //config.color_resolution = K4A_COLOR_RESOLUTION_3072P;
     m_deviceConfig.depth_mode = static_cast<k4a_depth_mode_t>(curr_settings.depth_mode); // K4A_DEPTH_MODE_WFOV_2X2BINNED;
     m_deviceConfig.camera_fps = static_cast<k4a_fps_t>(curr_settings.frames_per_second); // K4A_FRAMES_PER_SECOND_30;
 
@@ -110,7 +109,7 @@ bool Kinect::TrySaveCalibrationFile(const char* base_dir){
     return true;
 }
 
-void Kinect::save_color_image(k4a_image_t image, std::string dir, std::string frame_s){
+void Kinect::saveColorImage(k4a_image_t image, std::string dir, std::string frame_s){
 
     // code for storing the buffer in an image file
     uint8_t* image_buffer = k4a_image_get_buffer(image);
@@ -126,7 +125,7 @@ void Kinect::save_color_image(k4a_image_t image, std::string dir, std::string fr
     file_object.close();
 }
 
-void Kinect::save_depth_or_ir_image(k4a_image_t image, std::string dir, std::string frame_s){
+void Kinect::saveDepthOrIrImage(k4a_image_t image, std::string dir, std::string frame_s){
     // code for storing the buffer in an image file
     uint8_t* image_buffer = k4a_image_get_buffer(image);
     size_t image_buffer_size = k4a_image_get_size(image);
@@ -190,9 +189,9 @@ int Kinect::Run(int capture_frame_count){
                     time_diff);
 
             // Save all the images
-            save_color_image(color_image,m_data_dirs.colorFileDirectory, frame_s);
-            save_depth_or_ir_image(ir_image, m_data_dirs.irFileDirectory, frame_s);
-            save_depth_or_ir_image(depth_image, m_data_dirs.depthFileDirectory, frame_s);
+            saveColorImage(color_image,m_data_dirs.colorFileDirectory, frame_s);
+            saveDepthOrIrImage(ir_image, m_data_dirs.irFileDirectory, frame_s);
+            saveDepthOrIrImage(depth_image, m_data_dirs.depthFileDirectory, frame_s);
         }
 
         if (color_image != NULL) k4a_image_release(color_image);
