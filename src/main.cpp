@@ -63,6 +63,19 @@ int main(int argc, char* argv[]) {
     // Create the directory structure for saving data
     std::string s = date::format("%m_%d_%Y", std::chrono::system_clock::now());
     printf("Time: %s", s.c_str());
+
+    if (dirExists(root_dir) ==false){
+        printf("Error! No External Hard Drive detected.\nWould you like to store data locally?.")
+        std::string usr_input;
+        std::cin >> usr_input;
+        if (usr_input == 'y' || usr_input == "Y"){
+            root_dir = "~/Documents/Datasets/";
+        }
+        else{
+            return -1;
+        }
+    }
+
     std::string base_dir = root_dir;
     base_dir += s;
     if (curr_settings.create_data_capture_directories(base_dir.c_str()) == false){

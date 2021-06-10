@@ -3,7 +3,7 @@
 #include <sys/stat.h>
 #include <limits.h>
 
-bool read_temparatures(double &cpu_temp, double &gpu_temp){
+bool readTemparatures(double &cpu_temp, double &gpu_temp){
     char cpu[6];
     char gpu[6];
     
@@ -30,7 +30,7 @@ bool read_temparatures(double &cpu_temp, double &gpu_temp){
     return true;
 }
 
-int mkdir_recursive(const char *path)
+int mkdirRecursive(const char *path)
 {
     // Adapted from http://stackoverflow.com/a/2336245/119527 
     const size_t len = strlen(path);
@@ -67,4 +67,16 @@ int mkdir_recursive(const char *path)
     }   
 
     return 0;
+}
+
+int dirExists(const char *path)
+{
+    struct stat info;
+
+    if(stat( path, &info ) != 0)
+        return 0;
+    else if(info.st_mode & S_IFDIR)
+        return 1;
+    else
+        return 0;
 }
