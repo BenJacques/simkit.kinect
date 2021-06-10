@@ -25,10 +25,10 @@ public:
     int color_resolution;
     DATA_DIRS_T data_dirs;
 
-    bool load_settings(std::string file_path);
-    bool create_data_capture_directories(const char *fileDirectory);
+    bool LoadSettings(std::string file_path);
+    bool CreateDataCaptureDirectories(const char *fileDirectory);
 private:
-    void create_and_save_default_settings_file(std::string file_path);
+    void createAndSaveDefaultSettingsFile(std::string file_path);
 
 };
 } // end namespace Settings

@@ -32,8 +32,8 @@ private:
     k4a_device_configuration_t m_deviceConfig;
     settings::DATA_DIRS_T m_data_dirs;
 
-    void save_color_image(k4a_image_t image, std::string dir, std::string frame_s);
-    void save_depth_or_ir_image(k4a_image_t image, std::string dir, std::string frame_s);
+    void saveColorImage(k4a_image_t image, std::string dir, std::string frame_s);
+    void saveDepthOrIrImage(k4a_image_t image, std::string dir, std::string frame_s);
 };
 } // end namespace Kinect
 #endif

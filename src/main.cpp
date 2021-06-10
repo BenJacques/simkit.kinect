@@ -28,7 +28,7 @@ std::atomic <bool> temparature_logging_enabled (false);
 
 
 
-void log_temparatures(const char *fileDirectory){
+void logTemparatures(const char *fileDirectory){
     temparature_logging_enabled = true;
     std::string temparature_file_name = fileDirectory;
     temparature_file_name += "/temparature_readings.csv";
@@ -40,7 +40,7 @@ void log_temparatures(const char *fileDirectory){
         double cpu_temp;
         double gpu_temp;
         double kinect_temp;
-        bool nanoTempsRead = read_temparatures(cpu_temp, gpu_temp);
+        bool nanoTempsRead = readTemparatures(cpu_temp, gpu_temp);
         bool kinectTempRead = kinect_device.GetRecentTemparature(kinect_temp);
         if (nanoTempsRead && kinectTempRead){
             std::string s = date::format("%T", std::chrono::system_clock::now());
@@ -63,13 +63,26 @@ int main(int argc, char* argv[]) {
     // Create the directory structure for saving data
     std::string s = date::format("%m_%d_%Y", std::chrono::system_clock::now());
     printf("Time: %s", s.c_str());
+
+    if (dirExists(root_dir) ==false){
+        printf("Error! No External Hard Drive detected.\nWould you like to store data locally?.")
+        std::string usr_input;
+        std::cin >> usr_input;
+        if (usr_input == 'y' || usr_input == "Y"){
+            root_dir = "~/Documents/Datasets/";
+        }
+        else{
+            return -1;
+        }
+    }
+
     std::string base_dir = root_dir;
     base_dir += s;
-    if (curr_settings.create_data_capture_directories(base_dir.c_str()) == false){
+    if (curr_settings.CreateDataCaptureDirectories(base_dir.c_str()) == false){
         return -1;
     }
 
-    if (curr_settings.load_settings("config.json") == false){
+    if (curr_settings.LoadSettings("config.json") == false){
         return -1;
     }
 
@@ -101,7 +114,7 @@ int main(int argc, char* argv[]) {
 
     std::thread kinect_stream_thread = kinect_device.RunThread(captureFrameCount);
     std::thread button_thread = button_mapping.PollInputsThread(); 
-    std::thread log_temps_thread (log_temparatures, base_dir.c_str());
+    std::thread log_temps_thread (logTemparatures, base_dir.c_str());
     printf("**THREADS STARTED****\n");
     kinect_stream_thread.join();
     printf("**KINECT THREAD DONE****\n");; 
