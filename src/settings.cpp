@@ -64,7 +64,7 @@ bool Settings::CreateDataCaptureDirectories(const char *fileDirectory){
     
     int nError = 0;
     printf("Creating depth directory: %s", data_dirs.depthFileDirectory.c_str());
-    nError = mkdir_recursive(data_dirs.depthFileDirectory.c_str());
+    nError = mkdirRecursive(data_dirs.depthFileDirectory.c_str());
     if (nError != 0)   
     {
         printf("Depth directory (%s) creation failed. Exiting...", data_dirs.depthFileDirectory.c_str());
@@ -72,7 +72,7 @@ bool Settings::CreateDataCaptureDirectories(const char *fileDirectory){
     }
     
         printf("Creating color directory: %s", data_dirs.colorFileDirectory.c_str());
-    nError = mkdir_recursive(data_dirs.colorFileDirectory.c_str());
+    nError = mkdirRecursive(data_dirs.colorFileDirectory.c_str());
     if (nError != 0)
     {
         printf("Color directory creation failed. Exiting...");
@@ -80,7 +80,7 @@ bool Settings::CreateDataCaptureDirectories(const char *fileDirectory){
     }
     
         printf("Creating infrared directory: %s", data_dirs.irFileDirectory.c_str());
-    nError = mkdir_recursive(data_dirs.irFileDirectory.c_str());
+    nError = mkdirRecursive(data_dirs.irFileDirectory.c_str());
     if (nError != 0)
     {
         printf("Infrared directory creation failed. Exiting...");

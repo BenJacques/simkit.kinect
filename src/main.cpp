@@ -25,7 +25,7 @@ static buttons::Buttons button_mapping;
 static settings::Settings curr_settings;
 
 std::atomic <bool> temparature_logging_enabled (false);
-
+;
 
 
 void logTemparatures(const char *fileDirectory){
@@ -60,6 +60,11 @@ void logTemparatures(const char *fileDirectory){
 
 int main(int argc, char* argv[]) {
 
+    // Set up GPIO pins on the Nano
+    button_mapping.SetupPins();
+
+    std::thread button_thread = button_mapping.PollInputsThread(); 
+    
     // Create the directory structure for saving data
     std::string s = date::format("%m_%d_%Y", std::chrono::system_clock::now());
     printf("Time: %s", s.c_str());
@@ -108,13 +113,31 @@ int main(int argc, char* argv[]) {
     // Try saving the calibration file if possible
     kinect_device.TrySaveCalibrationFile(base_dir.c_str());
 
-    // Set up GPIO pins on the Nano
-    button_mapping.SetupPins();
 
+    std::thread log_temps_thread (logTemparatures, base_dir.c_str());
+
+    while (true){
+        if (button_mapping.start_button_clicked){
+
+        }
+        if (button_mapping.stop_button_clicked)
+        {
+            /* code */
+        }
+        if (button_mapping.yes_button_clicked){
+
+        }
+        if (button_mapping.no_button_clicked){
+
+        }
+        if (button_mapping.exit_button_clicked){
+            break;
+        }
+        
+    }
 
     std::thread kinect_stream_thread = kinect_device.RunThread(captureFrameCount);
-    std::thread button_thread = button_mapping.PollInputsThread(); 
-    std::thread log_temps_thread (logTemparatures, base_dir.c_str());
+
     printf("**THREADS STARTED****\n");
     kinect_stream_thread.join();
     printf("**KINECT THREAD DONE****\n");; 

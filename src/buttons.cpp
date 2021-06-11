@@ -48,22 +48,27 @@ void Buttons::PollInputs(){
         printf("polling buttons...\n");
         if (GPIO::input(UP_CHANNEL) == GPIO::HIGH){
             // Send qt event
+            start_button_clicked = true;
         }
 
         if (GPIO::input(DOWN_CHANNEL) == GPIO::HIGH){
             // Send qt event
+            stop_button_clicked = true;
         }
 
         if (GPIO::input(LEFT_CHANNEL) == GPIO::HIGH){
             // Send qt event
+            yes_button_clicked = true;
         }
 
         if (GPIO::input(RIGHT_CHANNEL) == GPIO::HIGH){
             // Send qt event
+            no_button_clicked = true;
         }
 
         if (GPIO::input(ENTER_CHANNEL) == GPIO::HIGH){
             // Send qt event
+            exit_button_clicked = true;
         }
         usleep(200000); // sleep for 200 ms to avoid lots of key press events
     }
