@@ -21,10 +21,7 @@ bool readTemparatures(double &cpu_temp, double &gpu_temp){
     
     cpu_temp = (double)atoi(fgets(cpu, 6, fcputemp))/1000;
     gpu_temp = (double)atoi(fgets(gpu, 6, fgputemp))/1000;
-    
-    printf("\rCpu : %.2fC, Gpu : %.2fC.", cpu_temp, gpu_temp);
 
-    
     fclose(fcputemp);
     fclose(fgputemp);
     return true;

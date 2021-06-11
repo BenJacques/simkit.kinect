@@ -58,7 +58,7 @@ void logTemparatures(const char *fileDirectory){
 
 
 int main(int argc, char* argv[]) {
-
+    UNUSED_PARAMS(argc, argv);
     // Set up GPIO pins on the Nano
     button_mapping.SetupPins();
 
@@ -66,10 +66,10 @@ int main(int argc, char* argv[]) {
     
     // Create the directory structure for saving data
     std::string s = date::format("%m_%d_%Y", std::chrono::system_clock::now());
-    printf("Time: %s", s.c_str());
+    printf("Time: %s\n", s.c_str());
 
     if (dirExists(root_dir) ==false){
-        printf("Error! No External Hard Drive detected.\nWould you like to store data locally?.");
+        printf("Error! No External Hard Drive detected.\nWould you like to store data locally?.\n");
         while (true){
             if (button_mapping.yes_button_clicked){
                 printf("Yes button clicked.");
@@ -89,12 +89,12 @@ int main(int argc, char* argv[]) {
     
     std::string base_dir = root_dir;
     base_dir += s;
-    printf("Creating data save directories at %s", base_dir);
+    printf("Creating data save directories at %s\n", base_dir.c_str());
     if (curr_settings.CreateDataCaptureDirectories(base_dir.c_str()) == false){
         return -1;
     }
 
-    printf("Loading settings...");
+    printf("Loading settings...\n");
     if (curr_settings.LoadSettings("config.json") == false){
         return -1;
     }
@@ -102,7 +102,7 @@ int main(int argc, char* argv[]) {
 
     // Connect to the Kinect 
     if (kinect_device.Connect(-1, curr_settings) == false){
-        printf("Failed to connect to Kinect.");
+        printf("Failed to connect to Kinect.\n");
         return 2;
     }
 
@@ -112,15 +112,18 @@ int main(int argc, char* argv[]) {
 
     std::thread log_temps_thread (logTemparatures, base_dir.c_str());
     std::thread kinect_stream_thread;
+    printf("Waiting for button press to start...\n");
     while (true){
         if (button_mapping.start_button_clicked){
-            printf("Start button clicked.");
+            printf("Start button clicked.\n");
             button_mapping.start_button_clicked = false;
-            kinect_stream_thread = kinect_device.RunThread(-1);
+            if (kinect_stream_thread.joinable() == false){
+                kinect_stream_thread = kinect_device.RunThread(-1);
+            }
         }
         if (button_mapping.stop_button_clicked)
         {
-            printf("Stop button clicked.");
+            printf("Stop button clicked.\n");
             button_mapping.stop_button_clicked = false;
             kinect_device.Stop();
             if (kinect_stream_thread.joinable()){
@@ -129,7 +132,7 @@ int main(int argc, char* argv[]) {
         }
 
         if (button_mapping.exit_button_clicked){
-            printf("Exit button clicked.");
+            printf("Exit button clicked.\n");
             button_mapping.exit_button_clicked = false;
             //TODO: This button does not seem to be working on the board I have.
             //It always reads high and therefore exits immediately.
@@ -139,16 +142,17 @@ int main(int argc, char* argv[]) {
         
         if (button_mapping.no_button_clicked)
         {
-            printf("Exit button clicked.");
+            printf("Exit button clicked.\n");
             button_mapping.no_button_clicked = false;
             break;
         }
     }
 
-    std::thread kinect_stream_thread = kinect_device.RunThread(-1);
+    kinect_device.Stop();
+    if (kinect_stream_thread.joinable()){
+        kinect_stream_thread.join();
+    }
 
-    printf("**THREADS STARTED****\n");
-    kinect_stream_thread.join();
     printf("**KINECT THREAD DONE****\n");; 
     temparature_logging_enabled = false;
     button_mapping.Close();

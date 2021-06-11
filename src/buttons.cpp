@@ -88,7 +88,7 @@ void Buttons::Close(){
     try
     {
         //TODO: This is causing segmentation faults. Need to figure out why.
-        GPIO::cleanup();
+        //GPIO::cleanup();
     }
     catch(const std::exception& e)
     {
