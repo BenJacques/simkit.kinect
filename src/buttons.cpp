@@ -82,13 +82,13 @@ std::thread Buttons::PollInputsThread(){
 void Buttons::Close(){
     printf("***SETTING BUTTON POLLING TO FALSE");
     m_polling=false;
-    while(m_polling_complete){
+    while(m_polling_complete == false){
         usleep(100000);
     }
     try
     {
         //TODO: This is causing segmentation faults. Need to figure out why.
-        //GPIO::cleanup();
+        GPIO::cleanup();
     }
     catch(const std::exception& e)
     {

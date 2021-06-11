@@ -20,11 +20,13 @@ public:
     int Run(int capture_frame_count);
     std::thread RunThread(int capture_frame_count);
     void Stop();
+    void Close();
     bool GetRecentTemparature(double &last_temp);
 
 private:
     //std::atomic<bool> m_streaming;
     std::atomic <bool> m_streaming;
+    std::atomic <bool> m_streamingComplete;
     std::atomic <double> m_lastTemp;
 
     k4a_device_t m_device;

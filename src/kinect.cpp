@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <fstream>
 #include <vector>
+#include <unistd.h>
 
 using namespace kinect;
 
@@ -151,6 +152,7 @@ int Kinect::Run(int capture_frame_count){
     }
 
     m_streaming = true;
+    m_streamingComplete = false;
 
     printf("Capturing %d frames.", capture_frame_count);
     while (m_streaming && frames_captured++ < capture_frame_count)
@@ -202,6 +204,7 @@ int Kinect::Run(int capture_frame_count){
         k4a_capture_release(m_capture);     
     }
     m_streaming = false;
+    m_streamingComplete = true;
     return 0;
 }
 
@@ -220,6 +223,12 @@ std::thread Kinect::RunThread(int capture_frame_count){
     return std::thread(&Kinect::Run, this, capture_frame_count);
 }
 void Kinect::Stop(){
+    m_streaming = false;
+    while (m_streamingComplete == false){
+        usleep(100000);
+    }
+}
+void Kinect::Close(){
     m_streaming = false;
     if (m_device != NULL){
         k4a_device_close(m_device);

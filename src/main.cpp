@@ -99,18 +99,6 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    int returnCode = 1;
-    int captureFrameCount;
-    if (argc < 2)
-    {
-        printf("%s FRAMECOUNT\n", argv[0]);
-        printf("Capture FRAMECOUNT color and depth frames from the device using the separate get frame APIs\n");
-        returnCode = 2;
-        return returnCode;
-    }
-
-    captureFrameCount = atoi(argv[1]);
-    printf("Capturing %d frames\n", captureFrameCount);
 
     // Connect to the Kinect 
     if (kinect_device.Connect(-1, curr_settings) == false){
@@ -123,16 +111,21 @@ int main(int argc, char* argv[]) {
 
 
     std::thread log_temps_thread (logTemparatures, base_dir.c_str());
-
+    std::thread kinect_stream_thread;
     while (true){
         if (button_mapping.start_button_clicked){
             printf("Start button clicked.");
             button_mapping.start_button_clicked = false;
+            kinect_stream_thread = kinect_device.RunThread(-1);
         }
         if (button_mapping.stop_button_clicked)
         {
             printf("Stop button clicked.");
             button_mapping.stop_button_clicked = false;
+            kinect_device.Stop();
+            if (kinect_stream_thread.joinable()){
+                kinect_stream_thread.join();
+            }
         }
 
         if (button_mapping.exit_button_clicked){
@@ -144,9 +137,15 @@ int main(int argc, char* argv[]) {
             //break;
         }
         
+        if (button_mapping.no_button_clicked)
+        {
+            printf("Exit button clicked.");
+            button_mapping.no_button_clicked = false;
+            break;
+        }
     }
 
-    std::thread kinect_stream_thread = kinect_device.RunThread(captureFrameCount);
+    std::thread kinect_stream_thread = kinect_device.RunThread(-1);
 
     printf("**THREADS STARTED****\n");
     kinect_stream_thread.join();
@@ -157,10 +156,9 @@ int main(int argc, char* argv[]) {
     printf("**BUTTON THREAD DONE****\n");
     log_temps_thread.join();
     printf("**LOG TEMPS THREAD DONE****\n");
-    returnCode = 0;
 
     kinect_device.Stop();
 
 
-    return returnCode;
+    return 0;
 }
