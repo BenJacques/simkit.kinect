@@ -137,7 +137,7 @@ int main(int argc, char* argv[]) {
             //TODO: This button does not seem to be working on the board I have.
             //It always reads high and therefore exits immediately.
             //Uncomment out the break to make exit functionality work.
-            //break;
+            break;
         }
         
         // This uses a system call to open a recent image from the color directory to show what the camera 
@@ -156,12 +156,13 @@ int main(int argc, char* argv[]) {
             }
         } */
 
-        if (button_mapping.no_button_clicked)
+        // This is only here because the exit button is not working on my setup
+        /* if (button_mapping.no_button_clicked)
         {
             printf("Exit button clicked.\n");
             button_mapping.no_button_clicked = false;
             break;
-        }
+        } */
     }
 
     kinect_device.Stop();
