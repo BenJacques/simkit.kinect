@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Exec=gnome-terminal --command 'bash -c "sleep 10s; cd ~/simkit.kinect; ./build/simkit_kinect; read"'
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name[en_US]=simkit_kinect
+Name=simkit_kinect
+Comment[en_US]=SIMKit datalogger
+Comment=SIMKit datalogger
