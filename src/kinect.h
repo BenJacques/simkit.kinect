@@ -15,10 +15,11 @@ public:
     Kinect();
     ~Kinect();
 
+    std::atomic <int> imageCount;
     bool Connect(int32_t exposureValue, settings::Settings &curr_settings);
     bool TrySaveCalibrationFile(const char* base_dir);
-    int Run(int capture_frame_count);
-    std::thread RunThread(int capture_frame_count);
+    int Run();
+    std::thread RunThread();
     void Stop();
     void Close();
     bool GetRecentTemparature(double &last_temp);

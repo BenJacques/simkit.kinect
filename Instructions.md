@@ -42,3 +42,4 @@ sudo udevadm control --reload-rules && sudo udevadm trigger
 
 # Other Notes
 It is best to disable the auto lock within Ubuntu. This can be done by going to System Settings -> Brightness and Lock
+The screen should also be set to not turn off when idle.

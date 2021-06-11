@@ -141,22 +141,17 @@ void Kinect::saveDepthOrIrImage(k4a_image_t image, std::string dir, std::string 
     file_object.close();  
 }
 
-int Kinect::Run(int capture_frame_count){
+int Kinect::Run(){
     long last_timestamp = 0;
-    int frames_captured = 0;
     std::string frame_s = "";
     const int32_t TIMEOUT_IN_MS = 1000;
-
-    if (capture_frame_count < 1){
-        capture_frame_count = INT32_MAX;
-    }
 
     m_streaming = true;
     m_streamingComplete = false;
 
-    printf("Capturing %d frames.", capture_frame_count);
-    while (m_streaming && frames_captured++ < capture_frame_count)
+    while (m_streaming)
     {
+
         // Get a depth frame
         switch (k4a_device_get_capture(m_device, &m_capture, TIMEOUT_IN_MS))
         {
@@ -171,9 +166,9 @@ int Kinect::Run(int capture_frame_count){
             return K4A_WAIT_RESULT_FAILED;
         }
 
-        
+        imageCount++;
         double curr_temp = (double)k4a_capture_get_temperature_c(m_capture);
-        frame_s = std::to_string(frames_captured);
+        frame_s = std::to_string(imageCount);
         printf("Capture %s %fC", frame_s.c_str(), curr_temp);
         m_lastTemp = curr_temp;
         // Probe for a color image
@@ -219,8 +214,8 @@ bool Kinect::GetRecentTemparature(double &last_temp){
     
     return true;
 }
-std::thread Kinect::RunThread(int capture_frame_count){
-    return std::thread(&Kinect::Run, this, capture_frame_count);
+std::thread Kinect::RunThread(){
+    return std::thread(&Kinect::Run, this);
 }
 void Kinect::Stop(){
     m_streaming = false;

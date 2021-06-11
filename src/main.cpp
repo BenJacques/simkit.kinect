@@ -118,7 +118,7 @@ int main(int argc, char* argv[]) {
             printf("Start button clicked.\n");
             button_mapping.start_button_clicked = false;
             if (kinect_stream_thread.joinable() == false){
-                kinect_stream_thread = kinect_device.RunThread(-1);
+                kinect_stream_thread = kinect_device.RunThread();
             }
         }
         if (button_mapping.stop_button_clicked)
@@ -140,6 +140,22 @@ int main(int argc, char* argv[]) {
             //break;
         }
         
+        // This uses a system call to open a recent image from the color directory to show what the camera 
+        // is looking at. I don't have a way to automatically close it yet, so I need to leave it off for now.
+        /* if (button_mapping.yes_button_clicked)
+        {
+            printf("Yes button clicked.\n");
+            button_mapping.yes_button_clicked = false;
+            char* image_to_show;
+            int image_num = kinect_device.imageCount -1;
+            int len = asprintf(&image_to_show, "eog %s%d.jpeg", curr_settings.data_dirs.colorFileDirectory.c_str(),image_num);
+            UNUSED_PARAM(len);
+            printf("Opening image %s\n", image_to_show);
+            if (system(image_to_show) == 0){
+                // Do nothing
+            }
+        } */
+
         if (button_mapping.no_button_clicked)
         {
             printf("Exit button clicked.\n");
