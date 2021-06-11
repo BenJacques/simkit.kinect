@@ -19,7 +19,7 @@
 #include "buttons.h"
 #include "settings.h"
 
-static const char* root_dir = "/media/animallab/FarmData04/Datasets/";
+static const char* root_dir = "/media/FarmData01/Datasets/";
 static kinect::Kinect kinect_device;
 static buttons::Buttons button_mapping;
 static settings::Settings curr_settings;
