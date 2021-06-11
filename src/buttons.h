@@ -10,11 +10,11 @@ class Buttons
 
 public:
 
-    std::atomic <bool> start_button_clicked (false);
-    std::atomic <bool> stop_button_clicked (false);
-    std::atomic <bool> exit_button_clicked (false);
-    std::atomic <bool> yes_button_clicked (false);
-    std::atomic <bool> no_button_clicked (false);
+    std::atomic<bool> start_button_clicked;
+    std::atomic<bool> stop_button_clicked;
+    std::atomic<bool> exit_button_clicked;
+    std::atomic<bool> yes_button_clicked;
+    std::atomic<bool> no_button_clicked;
 
     Buttons();
     ~Buttons();

@@ -19,13 +19,12 @@
 #include "buttons.h"
 #include "settings.h"
 
-static const char* root_dir = "/media/FarmData01/Datasets/";
+static const char* root_dir = "/media/animallab/FarmData04/Datasets/";
 static kinect::Kinect kinect_device;
 static buttons::Buttons button_mapping;
 static settings::Settings curr_settings;
 
 std::atomic <bool> temparature_logging_enabled (false);
-;
 
 
 void logTemparatures(const char *fileDirectory){
@@ -71,22 +70,31 @@ int main(int argc, char* argv[]) {
 
     if (dirExists(root_dir) ==false){
         printf("Error! No External Hard Drive detected.\nWould you like to store data locally?.");
-        char* usr_input;
-        std::cin >> usr_input;
-        if (usr_input == "y" || usr_input == "Y"){
-            root_dir = "~/Documents/Datasets/";
-        }
-        else{
-            return -1;
+        while (true){
+            if (button_mapping.yes_button_clicked){
+                printf("Yes button clicked.");
+                button_mapping.yes_button_clicked = false;
+                root_dir = "~/Documents/Datasets/";
+                break;
+            }
+            if (button_mapping.no_button_clicked){
+                printf("No button clicked.");
+                button_mapping.no_button_clicked = false;
+                return -1; //Exit the application
+            }
         }
     }
 
+    //Create the needed directories and load settings
+    
     std::string base_dir = root_dir;
     base_dir += s;
+    printf("Creating data save directories at %s", base_dir);
     if (curr_settings.CreateDataCaptureDirectories(base_dir.c_str()) == false){
         return -1;
     }
 
+    printf("Loading settings...");
     if (curr_settings.LoadSettings("config.json") == false){
         return -1;
     }
@@ -118,20 +126,22 @@ int main(int argc, char* argv[]) {
 
     while (true){
         if (button_mapping.start_button_clicked){
-
+            printf("Start button clicked.");
+            button_mapping.start_button_clicked = false;
         }
         if (button_mapping.stop_button_clicked)
         {
-            /* code */
+            printf("Stop button clicked.");
+            button_mapping.stop_button_clicked = false;
         }
-        if (button_mapping.yes_button_clicked){
 
-        }
-        if (button_mapping.no_button_clicked){
-
-        }
         if (button_mapping.exit_button_clicked){
-            break;
+            printf("Exit button clicked.");
+            button_mapping.exit_button_clicked = false;
+            //TODO: This button does not seem to be working on the board I have.
+            //It always reads high and therefore exits immediately.
+            //Uncomment out the break to make exit functionality work.
+            //break;
         }
         
     }
