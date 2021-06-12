@@ -66,7 +66,7 @@ void Buttons::PollInputs(){
             no_button_clicked = true;
         }
 
-        if (GPIO::input(ENTER_CHANNEL) == GPIO::HIGH){
+        if (GPIO::input(ENTER_CHANNEL) == GPIO::LOW){
             // Send qt event
             exit_button_clicked = true;
         }
