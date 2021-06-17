@@ -63,7 +63,6 @@ git remote -v
    sudo apt-get install libx11-dev libxi-dev libxext-dev libxtst-dev
    ```
    - See https://github.com/open-source-parsers/jsoncpp for more information.
-
    - __DEVELOPER NOTE__: Package `libmesa-dev` cannot be located in apt repository. Doesn't appear to cause any errors but we should look into this.
 8) Install Azure Kinect Sensor SDK
    ```
