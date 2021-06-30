@@ -70,6 +70,7 @@ This step sets up the JetsonGPIO c++ libraray. This is used to tie the buttons o
 
 `sudo udevadm control --reload-rules && sudo udevadm trigger`
 
+`sudo apt-get install libxtst-dev`
 
 # Setup External Drive
 
