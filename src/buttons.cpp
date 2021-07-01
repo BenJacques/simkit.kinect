@@ -55,50 +55,76 @@ void Buttons::PollInputs(){
     printf("Polling buttons started...\n");
     while (m_polling){
        
-        if (GPIO::input(UP_CHANNEL) == GPIO::LOW){
+        if (GPIO::input(UP_CHANNEL) == GPIO::LOW && up_button_clicked){
             // Send up key press event
+            printf("Up button clicked.\n");
             keycode = XKeysymToKeycode(display, XK_Up);
             XTestFakeKeyEvent(display, keycode, True, 0);
             XTestFakeKeyEvent(display, keycode, False, 0);
             XFlush(display);
-            start_button_clicked = true;
+            up_button_clicked = true;
+        }
+        else
+        {
+            up_button_clicked = false;
         }
 
-        if (GPIO::input(DOWN_CHANNEL) == GPIO::LOW){
+        if (GPIO::input(DOWN_CHANNEL) == GPIO::LOW && down_button_clicked){
             // Send down key press event
+            printf("Down button clicked.\n");
             keycode = XKeysymToKeycode(display, XK_Down);
             XTestFakeKeyEvent(display, keycode, True, 0);
             XTestFakeKeyEvent(display, keycode, False, 0);
             XFlush(display);
-            stop_button_clicked = true;
+            down_button_clicked = true;
+        }
+        else
+        {
+            down_button_clicked = false;
         }
 
-        if (GPIO::input(LEFT_CHANNEL) == GPIO::LOW){
+        if (GPIO::input(LEFT_CHANNEL) == GPIO::LOW && left_button_clicked){
             // Send left key press event
+            printf("Left button clicked.\n");
             keycode = XKeysymToKeycode(display, XK_Left);
             XTestFakeKeyEvent(display, keycode, True, 0);
             XTestFakeKeyEvent(display, keycode, False, 0);
             XFlush(display);
-            yes_button_clicked = true;
+            left_button_clicked = true;
+        }
+        else
+        {
+            left_button_clicked = false;
         }
 
-        if (GPIO::input(RIGHT_CHANNEL) == GPIO::LOW){
+        if (GPIO::input(RIGHT_CHANNEL) == GPIO::LOW && right_button_clicked){
             // Send right key press event
+            printf("Right button clicked.\n");
             keycode = XKeysymToKeycode(display, XK_Right);
             XTestFakeKeyEvent(display, keycode, True, 0);
             XTestFakeKeyEvent(display, keycode, False, 0);
             XFlush(display);
-            no_button_clicked = true;
+            right_button_clicked = true;
+        }
+        else
+        {
+            right_button_clicked = false;
         }
 
-        if (GPIO::input(ENTER_CHANNEL) == GPIO::LOW){
+        if (GPIO::input(ENTER_CHANNEL) == GPIO::LOW && enter_button_clicked){
             // Send space bar event
+            printf("Enter button clicked.\n");
             keycode = XKeysymToKeycode(display, XK_space);
             XTestFakeKeyEvent(display, keycode, True, 0);
             XTestFakeKeyEvent(display, keycode, False, 0);
             XFlush(display);
-            exit_button_clicked = true;
+            enter_button_clicked = true;
         }
+        else
+        {
+            enter_button_clicked = false;
+        }
+
         usleep(200000); // sleep for 200 ms to avoid lots of key press events
     }
     printf("Polling buttons stopped.\n");
@@ -118,7 +144,7 @@ void Buttons::Close(){
     try
     {
         //TODO: This is causing segmentation faults. Need to figure out why.
-        GPIO::cleanup();
+        //GPIO::cleanup();
     }
     catch(const std::exception& e)
     {
