@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>742</width>
+    <width>721</width>
     <height>528</height>
    </rect>
   </property>
@@ -27,8 +27,8 @@
      <rect>
       <x>0</x>
       <y>-10</y>
-      <width>741</width>
-      <height>491</height>
+      <width>721</width>
+      <height>481</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -53,11 +53,20 @@
      <widget class="QPushButton" name="pushButton_Config">
       <property name="geometry">
        <rect>
-        <x>330</x>
+        <x>320</x>
         <y>240</y>
         <width>181</width>
         <height>191</height>
        </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+	font: 20pt &quot;Ubuntu&quot;;
+}
+QPushButton:focus {
+    background-color: rgb(114, 159, 207);
+	font: 20pt &quot;Ubuntu&quot;;
+}</string>
       </property>
       <property name="text">
        <string>Config</string>
@@ -66,7 +75,7 @@
      <widget class="QPushButton" name="pushButton_Start">
       <property name="geometry">
        <rect>
-        <x>330</x>
+        <x>320</x>
         <y>10</y>
         <width>391</width>
         <height>221</height>
@@ -75,6 +84,15 @@
       <property name="autoFillBackground">
        <bool>false</bool>
       </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+	font: 20pt &quot;Ubuntu&quot;;
+}
+QPushButton:focus {
+    background-color: rgb(114, 159, 207);
+	font: 20pt &quot;Ubuntu&quot;;
+}</string>
+      </property>
       <property name="text">
        <string>Start</string>
       </property>
@@ -82,11 +100,20 @@
      <widget class="QPushButton" name="pushButton_Exit">
       <property name="geometry">
        <rect>
-        <x>530</x>
+        <x>520</x>
         <y>240</y>
         <width>191</width>
         <height>191</height>
        </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+	font: 20pt &quot;Ubuntu&quot;;
+}
+QPushButton:focus {
+    background-color: rgb(114, 159, 207);
+	font: 20pt &quot;Ubuntu&quot;;
+}</string>
       </property>
       <property name="text">
        <string>Exit</string>
@@ -137,11 +164,20 @@ p, li { white-space: pre-wrap; }
      <widget class="QPushButton" name="pushButton_Back">
       <property name="geometry">
        <rect>
-        <x>550</x>
+        <x>530</x>
         <y>230</y>
         <width>181</width>
         <height>201</height>
        </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+	font: 20pt &quot;Ubuntu&quot;;
+}
+QPushButton:focus {
+    background-color: rgb(114, 159, 207);
+	font: 20pt &quot;Ubuntu&quot;;
+}</string>
       </property>
       <property name="text">
        <string>Back to 
@@ -151,11 +187,20 @@ Menu</string>
      <widget class="QPushButton" name="pushButton_ToggleView">
       <property name="geometry">
        <rect>
-        <x>550</x>
+        <x>530</x>
         <y>20</y>
         <width>181</width>
         <height>201</height>
        </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+	font: 20pt &quot;Ubuntu&quot;;
+}
+QPushButton:focus {
+    background-color: rgb(114, 159, 207);
+	font: 20pt &quot;Ubuntu&quot;;
+}</string>
       </property>
       <property name="text">
        <string>Show Depth 
@@ -167,7 +212,7 @@ Image</string>
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>521</width>
+        <width>501</width>
         <height>411</height>
        </rect>
       </property>
