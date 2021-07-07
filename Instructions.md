@@ -38,6 +38,8 @@ This step sets up the `vcpkg` tool that is currently used to install the needed 
 
 `./vcpkg install opencv4`
 
+`./vcpkg install loguru`
+
 
 # Install Azure Kinect SDK
 
