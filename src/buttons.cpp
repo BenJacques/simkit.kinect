@@ -55,7 +55,7 @@ void Buttons::PollInputs(){
     printf("Polling buttons started...\n");
     while (m_polling){
        
-        if (GPIO::input(UP_CHANNEL) == GPIO::LOW && up_button_clicked){
+        if (GPIO::input(UP_CHANNEL) == GPIO::LOW && !up_button_clicked){
             // Send up key press event
             printf("Up button clicked.\n");
             keycode = XKeysymToKeycode(display, XK_Up);
@@ -69,7 +69,7 @@ void Buttons::PollInputs(){
             up_button_clicked = false;
         }
 
-        if (GPIO::input(DOWN_CHANNEL) == GPIO::LOW && down_button_clicked){
+        if (GPIO::input(DOWN_CHANNEL) == GPIO::LOW && !down_button_clicked){
             // Send down key press event
             printf("Down button clicked.\n");
             keycode = XKeysymToKeycode(display, XK_Down);
@@ -83,7 +83,7 @@ void Buttons::PollInputs(){
             down_button_clicked = false;
         }
 
-        if (GPIO::input(LEFT_CHANNEL) == GPIO::LOW && left_button_clicked){
+        if (GPIO::input(LEFT_CHANNEL) == GPIO::LOW && !left_button_clicked){
             // Send left key press event
             printf("Left button clicked.\n");
             keycode = XKeysymToKeycode(display, XK_Left);
@@ -97,7 +97,7 @@ void Buttons::PollInputs(){
             left_button_clicked = false;
         }
 
-        if (GPIO::input(RIGHT_CHANNEL) == GPIO::LOW && right_button_clicked){
+        if (GPIO::input(RIGHT_CHANNEL) == GPIO::LOW && !right_button_clicked){
             // Send right key press event
             printf("Right button clicked.\n");
             keycode = XKeysymToKeycode(display, XK_Right);
@@ -111,7 +111,7 @@ void Buttons::PollInputs(){
             right_button_clicked = false;
         }
 
-        if (GPIO::input(ENTER_CHANNEL) == GPIO::LOW && enter_button_clicked){
+        if (GPIO::input(ENTER_CHANNEL) == GPIO::LOW && !enter_button_clicked){
             // Send space bar event
             printf("Enter button clicked.\n");
             keycode = XKeysymToKeycode(display, XK_space);
