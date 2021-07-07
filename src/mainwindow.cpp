@@ -14,7 +14,7 @@
 #include "kinect.h"
 #include "buttons.h"
 #include "settings.h"
-
+#include <loguru.hpp>
 
 std::atomic <bool> temparature_logging_enabled (false);
 QTimer *timer;
@@ -43,10 +43,12 @@ void MainWindow::initializeUi()
 
     // Create the directory structure for saving data
     std::string s = date::format("%m_%d_%Y-%H_%M_%S", std::chrono::system_clock::now());
-    printf("Time: %s\n", s.c_str());
+    LOG_F(INFO, "Time: %s\n", s.c_str());
 
     if (dirExists(root_dir) ==false){
         QMessageBox msgBox;
+        QFont font = QFont("Ubuntu", 20);
+        msgBox.setFont(font);
         msgBox.setText("No external hard drive detected.\nWould you like to store data locally instead?");
         msgBox.setInformativeText("Save locally?");
         msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
@@ -63,12 +65,12 @@ void MainWindow::initializeUi()
     //Create the needed directories and load settings
     base_dir = root_dir;
     base_dir += s;
-    printf("Creating data save directories at %s\n", base_dir.c_str());
+    LOG_F(INFO, "Creating data save directories at %s\n", base_dir.c_str());
     if (curr_settings.CreateDataCaptureDirectories(base_dir.c_str()) == false){
         return;
     }
 
-    printf("Loading settings...\n");
+    LOG_F(INFO, "Loading settings...\n");
     if (curr_settings.LoadSettings("config.json") == false){
         return;
     }
@@ -76,7 +78,7 @@ void MainWindow::initializeUi()
 
     // Connect to the Kinect 
     if (kinect_device.Connect(-1, curr_settings) == false){
-        printf("Failed to connect to Kinect.\n");
+        LOG_F(ERROR, "Failed to connect to Kinect.\n");
         return;
     }
 
@@ -98,6 +100,7 @@ void MainWindow::showEvent(QShowEvent* ev)
 
 void MainWindow::on_pushButton_ToggleView_clicked()
 {
+    LOG_F(INFO, "Toggle View button clicked");
     show_color_image = !show_color_image;
     if (show_color_image){
         ui->pushButton_ToggleView->setText("Show Depth \nImage");
@@ -109,6 +112,7 @@ void MainWindow::on_pushButton_ToggleView_clicked()
 
 void MainWindow::on_pushButton_Back_clicked()
 {
+    LOG_F(INFO, "Back button clicked");
     ui->tabWidget->setCurrentWidget(ui->tabWidget->findChild<QWidget *>("tab_Main"));
 }
 
@@ -138,6 +142,7 @@ void MainWindow::on_updateImage()
 
 void MainWindow::on_pushButton_Start_clicked()
 {
+    LOG_F(INFO, "Start button clicked");
     if (kinect_stream_thread.joinable() == false) {
         handleKinectStart();
     }
@@ -148,11 +153,13 @@ void MainWindow::on_pushButton_Start_clicked()
 
 void MainWindow::on_pushButton_Config_clicked()
 {
+    LOG_F(INFO, "Config button clicked");
     ui->tabWidget->setCurrentWidget(ui->tabWidget->findChild<QWidget *>("tab_cameraViewer"));
 }
 
 void MainWindow::on_pushButton_Exit_clicked()
 {
+    LOG_F(INFO, "Exit button clicked");
     handleExit();
 }
 
@@ -172,6 +179,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 
 void MainWindow::handleKinectStart()
 {
+    LOG_F(INFO, "Entered handleKinectStart");
     if (kinect_stream_thread.joinable() == false){
         ui->pushButton_Start->setText("Stop Streaming");
         kinect_stream_thread = kinect_device.RunThread();
@@ -181,6 +189,7 @@ void MainWindow::handleKinectStart()
 
 void MainWindow::handleKinectStop()
 {
+    LOG_F(INFO, "Entered handleKinectStop");
     kinect_device.Stop();
     if (kinect_stream_thread.joinable()){
         kinect_stream_thread.join();
@@ -191,7 +200,10 @@ void MainWindow::handleKinectStop()
 
 void MainWindow::handleExit()
 {
+    LOG_F(INFO, "Entered handleExit");
     QMessageBox msgBox;
+    QFont font = QFont("Ubuntu", 20);
+    msgBox.setFont(font);
     msgBox.setText("Are you sure you want to exit?");
     msgBox.setInformativeText("Exit?");
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
@@ -208,13 +220,13 @@ void MainWindow::handleExit()
         kinect_stream_thread.join();
     }
 
-    printf("**KINECT THREAD DONE****\n");; 
+    LOG_F(INFO, "**KINECT THREAD DONE****\n");; 
     temparature_logging_enabled = false;
     button_mapping.Close();
     button_thread.join();
-    printf("**BUTTON THREAD DONE****\n");
+    LOG_F(INFO, "**BUTTON THREAD DONE****\n");
     log_temps_thread.join();
-    printf("**LOG TEMPS THREAD DONE****\n");
+    LOG_F(INFO, "**LOG TEMPS THREAD DONE****\n");
     QCoreApplication::exit();
 }
 

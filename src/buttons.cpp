@@ -4,8 +4,7 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <X11/extensions/XTest.h>
-#include <fstream>
-#include "date.h"
+#include <loguru.hpp>
 
 using namespace buttons;
 
@@ -53,24 +52,12 @@ void Buttons::PollInputs(){
     display = XOpenDisplay(NULL);
     unsigned int keycode;
 
-    std::ofstream file_object("logging.log");
-    std::string s = date::format("%T", std::chrono::system_clock::now());
-    char *output;
-    int len = asprintf(&output, "%s | Polling buttons started.\n",s.c_str());
-    file_object.write(output,len);
-    free(output);
-    file_object.flush();
-    printf("Polling buttons started...\n");
-    //LOG_F(INFO, "Polling buttons started...\n");
+    LOG_F(INFO, "Polling buttons started...\n");
     while (m_polling){
        
         if (GPIO::input(UP_CHANNEL) == GPIO::LOW && !up_button_clicked){
             // Send up key press event
-            //LOG_F(INFO, "Up button clicked.\n");
-            len = asprintf(&output, "%s | Up button clicked.\n",s.c_str());
-            file_object.write(output,len);
-            free(output);
-            file_object.flush();
+            LOG_F(INFO, "Up button clicked.\n");
             keycode = XKeysymToKeycode(display, XK_Up);
             XTestFakeKeyEvent(display, keycode, True, 0);
             XTestFakeKeyEvent(display, keycode, False, 0);
@@ -84,11 +71,7 @@ void Buttons::PollInputs(){
 
         if (GPIO::input(DOWN_CHANNEL) == GPIO::LOW && !down_button_clicked){
             // Send down key press event
-            //LOG_F(INFO, "Down button clicked.\n");
-            len = asprintf(&output, "%s | Down button clicked.\n",s.c_str());
-            file_object.write(output,len);
-            free(output);
-            file_object.flush();
+            LOG_F(INFO, "Down button clicked.\n");
             keycode = XKeysymToKeycode(display, XK_Down);
             XTestFakeKeyEvent(display, keycode, True, 0);
             XTestFakeKeyEvent(display, keycode, False, 0);
@@ -102,11 +85,7 @@ void Buttons::PollInputs(){
 
         if (GPIO::input(LEFT_CHANNEL) == GPIO::LOW && !left_button_clicked){
             // Send left key press event
-            //LOG_F(INFO, "Left button clicked.\n");
-            len = asprintf(&output, "%s | Left button clicked.\n",s.c_str());
-            file_object.write(output,len);
-            free(output);
-            file_object.flush();
+            LOG_F(INFO, "Left button clicked.\n");
             keycode = XKeysymToKeycode(display, XK_Left);
             XTestFakeKeyEvent(display, keycode, True, 0);
             XTestFakeKeyEvent(display, keycode, False, 0);
@@ -120,11 +99,7 @@ void Buttons::PollInputs(){
 
         if (GPIO::input(RIGHT_CHANNEL) == GPIO::LOW && !right_button_clicked){
             // Send right key press event
-            //LOG_F(INFO, "Right button clicked.\n");
-            len = asprintf(&output, "%s | Right button clicked.\n",s.c_str());
-            file_object.write(output,len);
-            free(output);
-            file_object.flush();
+            LOG_F(INFO, "Right button clicked.\n");
             keycode = XKeysymToKeycode(display, XK_Right);
             XTestFakeKeyEvent(display, keycode, True, 0);
             XTestFakeKeyEvent(display, keycode, False, 0);
@@ -138,11 +113,7 @@ void Buttons::PollInputs(){
 
         if (GPIO::input(ENTER_CHANNEL) == GPIO::LOW && !enter_button_clicked){
             // Send space bar event
-            //LOG_F(INFO, "Enter button clicked.\n");
-            len = asprintf(&output, "%s | Enter button clicked.\n",s.c_str());
-            file_object.write(output,len);
-            free(output);
-            file_object.flush();
+            LOG_F(INFO, "Enter button clicked.\n");
             keycode = XKeysymToKeycode(display, XK_space);
             XTestFakeKeyEvent(display, keycode, True, 0);
             XTestFakeKeyEvent(display, keycode, False, 0);
@@ -165,7 +136,7 @@ std::thread Buttons::PollInputsThread(){
 }
 
 void Buttons::Close(){
-    printf("***SETTING BUTTON POLLING TO FALSE");
+    LOG_F(INFO, "***SETTING BUTTON POLLING TO FALSE");
     m_polling=false;
     while(m_polling_complete == false){
         usleep(100000);
@@ -177,7 +148,7 @@ void Buttons::Close(){
     }
     catch(const std::exception& e)
     {
-        printf("Error in Buttons::Close %s\n",e.what());
+        LOG_F(ERROR, "Error in Buttons::Close %s\n",e.what());
     }
     
     

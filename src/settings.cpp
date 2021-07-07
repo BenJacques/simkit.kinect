@@ -3,6 +3,7 @@
 #include "settings.h"
 #include <fstream>
 #include "utils.h"
+#include <loguru.hpp>
 
 using namespace settings;
 
@@ -31,7 +32,7 @@ bool Settings::LoadSettings(std::string file_path){
     if (ifs.good()== false){
         ifs.close();
         // If the config file doesn't exist, then create and save it first
-        printf("No settings file found. Creating default one.\n");
+        LOG_F(INFO, "No settings file found. Creating default one.\n");
         createAndSaveDefaultSettingsFile(file_path);
     }
     ifs.open(file_path);
@@ -39,7 +40,7 @@ bool Settings::LoadSettings(std::string file_path){
     builder["collectComments"] = true;
     JSONCPP_STRING   errs;
     if (!parseFromStream(builder, ifs, &root, &errs)) {
-        printf("Error loading settings from file. %s", errs.c_str());
+        LOG_F(ERROR, "Error loading settings from file. %s", errs.c_str());
         return false;
     }
     exposure = root["exposure"].asInt();
@@ -63,27 +64,27 @@ bool Settings::CreateDataCaptureDirectories(const char *fileDirectory){
     data_dirs.irFileDirectory += "/Infrared/";
     
     int nError = 0;
-    printf("Creating depth directory: %s", data_dirs.depthFileDirectory.c_str());
+    LOG_F(INFO, "Creating depth directory: %s", data_dirs.depthFileDirectory.c_str());
     nError = mkdirRecursive(data_dirs.depthFileDirectory.c_str());
     if (nError != 0)   
     {
-        printf("Depth directory (%s) creation failed. Exiting...", data_dirs.depthFileDirectory.c_str());
+        LOG_F(ERROR, "Depth directory (%s) creation failed. Exiting...", data_dirs.depthFileDirectory.c_str());
         return false;
     }
     
-        printf("Creating color directory: %s", data_dirs.colorFileDirectory.c_str());
+    LOG_F(INFO, "Creating color directory: %s", data_dirs.colorFileDirectory.c_str());
     nError = mkdirRecursive(data_dirs.colorFileDirectory.c_str());
     if (nError != 0)
     {
-        printf("Color directory creation failed. Exiting...");
+        LOG_F(ERROR, "Color directory creation failed. Exiting...");
         return false;
     }
     
-        printf("Creating infrared directory: %s", data_dirs.irFileDirectory.c_str());
+    LOG_F(INFO, "Creating infrared directory: %s", data_dirs.irFileDirectory.c_str());
     nError = mkdirRecursive(data_dirs.irFileDirectory.c_str());
     if (nError != 0)
     {
-        printf("Infrared directory creation failed. Exiting...");
+        LOG_F(ERROR, "Infrared directory creation failed. Exiting...");
         return false;
     }
     

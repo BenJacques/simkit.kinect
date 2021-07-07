@@ -4,6 +4,7 @@
 #include <fstream>
 #include <vector>
 #include <unistd.h>
+#include <loguru.hpp>
 
 using namespace kinect;
 
@@ -22,19 +23,19 @@ bool Kinect::Connect(int32_t exposureValue, settings::Settings &curr_settings){
     m_data_dirs = curr_settings.data_dirs;
     if (device_count == 0)
     {
-        printf("No K4A devices found\n");
+        LOG_F(ERROR, "No K4A devices found\n");
         return false;
     }
 
     if (K4A_RESULT_SUCCEEDED != k4a_device_open(K4A_DEVICE_DEFAULT, &m_device))
     {
-        printf("Failed to open device\n");
+        LOG_F(ERROR, "Failed to open device\n");
         return false;
     }
 
     // Configure the device for ideal streaming parameters.
     // TODO: Change this to a config file later.
-
+    m_deviceConfig = K4A_DEVICE_CONFIG_INIT_DISABLE_ALL;
     m_deviceConfig.color_format = K4A_IMAGE_FORMAT_COLOR_MJPG;
     m_deviceConfig.color_resolution = static_cast<k4a_color_resolution_t>(curr_settings.color_resolution); // K4A_COLOR_RESOLUTION_2160P;
     m_deviceConfig.depth_mode = static_cast<k4a_depth_mode_t>(curr_settings.depth_mode); // K4A_DEPTH_MODE_WFOV_2X2BINNED;
@@ -43,7 +44,7 @@ bool Kinect::Connect(int32_t exposureValue, settings::Settings &curr_settings){
 
     if (K4A_RESULT_SUCCEEDED != k4a_device_start_cameras(m_device, &m_deviceConfig))
     {
-        printf("Failed to start device\n");
+        LOG_F(ERROR, "Failed to start device\n");
         return false;
     }
 
@@ -54,7 +55,7 @@ bool Kinect::Connect(int32_t exposureValue, settings::Settings &curr_settings){
                                                                  K4A_COLOR_CONTROL_MODE_MANUAL,
                                                                  exposureValue))
         {
-            std::cout << "[Streaming Service] Failed to set the exposure" << std::endl;
+            LOG_F(ERROR, "Failed to set the exposure value to %d", exposureValue);
             return false;
         }
     }
@@ -65,7 +66,7 @@ bool Kinect::Connect(int32_t exposureValue, settings::Settings &curr_settings){
                                                                  K4A_COLOR_CONTROL_MODE_AUTO,
                                                                  0))
         {
-            std::cout << "[Streaming Service] Failed to set auto exposure" << std::endl;
+            LOG_F(ERROR, "Failed to set auto exposure");
             return false;
         }
     }
@@ -98,13 +99,13 @@ bool Kinect::TrySaveCalibrationFile(const char* base_dir){
         }
         else
         {
-            printf("Failed to read device calibration\n");
+            LOG_F(ERROR, "Failed to read device calibration\n");
             return false;
         }
     }
     else
     {
-        printf("Failed to read device calibration2\n");
+        LOG_F(ERROR, "Failed to read device calibration2\n");
         return false;
     }
     return true;
@@ -158,11 +159,11 @@ int Kinect::Run(){
         case K4A_WAIT_RESULT_SUCCEEDED:
             break;
         case K4A_WAIT_RESULT_TIMEOUT:
-            printf("Timed out waiting for a capture\n");
+            LOG_F(ERROR, "Timed out waiting for a capture\n");
             continue;
             break;
         case K4A_WAIT_RESULT_FAILED:
-            printf("Failed to read a capture\n");
+            LOG_F(ERROR, "Failed to read a capture\n");
             return K4A_WAIT_RESULT_FAILED;
         }
 
