@@ -12,7 +12,7 @@ This step sets up the basic needs for getting the operating system in a good sta
 
 `sudo apt-get install curl zip unzip tar`
 
-`sudo apt-get install qtcreator`
+`sudo apt-get install qt5-default`
 
 # Install vcpkg and associated packages
 
