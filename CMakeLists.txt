@@ -29,7 +29,7 @@ find_package(jsoncpp CONFIG REQUIRED)
 find_package(Qt5Core CONFIG REQUIRED)
 find_package(Qt5Gui CONFIG REQUIRED)
 find_package(Qt5Widgets CONFIG REQUIRED)   
-
+#find_package(OpenCV CONFIG REQUIRED)
 
 string(JOIN " " CXX_FLAGS_LIST
     -O2
@@ -57,3 +57,4 @@ target_link_libraries(simkit_kinect PRIVATE pthread)
 target_link_libraries(simkit_kinect PRIVATE jsoncpp_object jsoncpp_static)
 target_link_libraries(simkit_kinect PRIVATE Qt5::Core Qt5::Gui Qt5::Widgets)
 target_link_libraries(simkit_kinect PRIVATE X11 Xtst)
+#target_link_libraries(simkit_kinect PRIVATE opencv_ml tegra_hal opencv_dnn opencv_core)

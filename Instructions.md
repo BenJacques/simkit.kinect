@@ -12,6 +12,8 @@ This step sets up the basic needs for getting the operating system in a good sta
 
 `sudo apt-get install curl zip unzip tar`
 
+`sudo apt-get install qtcreator`
+
 # Install vcpkg and associated packages
 
 This step sets up the `vcpkg` tool that is currently used to install the needed `jsoncpp` package. It can be used for other packages in the future.
@@ -33,6 +35,8 @@ This step sets up the `vcpkg` tool that is currently used to install the needed 
 `./vcpkg integrate install`
 
 `./vcpkg install jsoncpp`
+
+`./vcpkg install opencv4`
 
 
 # Install Azure Kinect SDK

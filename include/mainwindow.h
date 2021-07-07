@@ -23,17 +23,17 @@ public:
 private slots:
     void on_pushButton_Start_clicked();
 
-    void on_actionStart_triggered();
-
     void on_pushButton_Config_clicked();
-
-    void on_actionConfig_triggered();
-
-    void on_actionExit_triggered();
 
     void on_pushButton_Exit_clicked();
 
-    void on_actionVersion_triggered();
+    void on_updateImage();
+
+    void on_pushButton_ToggleView_clicked();
+
+    void on_pushButton_Back_clicked();
+
+    void on_tabWidget_currentChanged(int index);
 
 protected:
     void showEvent(QShowEvent *ev);
@@ -47,6 +47,7 @@ private:
     std::thread kinect_stream_thread;
     std::thread log_temps_thread;
     std::thread button_thread;
+    bool show_color_image;
 
     Ui::MainWindow *ui;
     void initializeUi();
@@ -54,6 +55,7 @@ private:
     void handleExit();
     void handleKinectStart();
     void handleKinectStop();
+    QImage readDepthImageAsQImage(std::string file_name);
 };
 
 #endif // MAINWINDOW_H
